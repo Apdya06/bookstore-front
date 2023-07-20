@@ -31,21 +31,21 @@
             </v-layout> 
         </v-container>
         <div class="text-xs-center">
-            <v-pagination v-model="page" @input="go" :length="lengthPage" :total-visible="4"></v-pagination>
+            <v-pagination v-model="page" @input="go" :length="lengthPage" :total-visible="5"></v-pagination>
         </div>
     </div>
 </template>
 
 <style scoped>
 .text-block {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  background-color: black;
-  padding-left: 5px;
-  padding-right: 5px;
-  opacity: 0.7;
-  width: 100%;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background-color: black;
+    padding-left: 5px;
+    padding-right: 5px;
+    opacity: 0.7;
+    width: 100%;
 }
 </style>
 
@@ -69,16 +69,20 @@
             },
             go(){
                 let url = '/books'
-                if(this.page > 0) url = '/books?page=' + this.page
+                if(this.page > 0) url = url + '?page=' + this.page
                 this.axios.get(url)
                 .then((response) => {
                     let response_data = response.data
                     let books = response_data.data
-                    this.lengthPage = response_data.last_page
+                    this.lengthPage = response_data.meta.last_page
                     this.books = books 
                 })
                 .catch((error) => {
-                    console.log(error)
+                    if (error.response) {
+                        console.log(error.response);
+                    } else {
+                        console.log(error);
+                    }
                 })
             },
         }, 
