@@ -86,12 +86,24 @@
                         this.close();
                     })
                     .catch((error) => {
-                        let response = error.response;
-                        this.setAlert({
-                            status: true,
-                            text: response.data.message,
-                            type: 'error',
-                        });
+                        let response = {};                       
+                        if (error.response) {
+                            response = error.response;
+                            this.setAlert({
+                                status: true,
+                                text: response.data.data.message,
+                                type: 'error',
+                            });
+                        }
+                         else {
+                            response = error;
+                            this.setAlert({
+                                status: true,
+                                text: response,
+                                type: 'error',
+                            }); 
+                        }
+
                     });
                 }
             },

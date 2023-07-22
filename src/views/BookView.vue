@@ -35,7 +35,7 @@
             <v-subheader>Descripton</v-subheader>
             <p class="body-2"> {{ book.description }}</p>
             <div style="position:relative">
-                <v-btn block color="success" @click="buy" :disabled="book.stock==0">
+                <v-btn block color="success" @click="buy" :disabled="book.stock == 0">
                     <v-icon>save_alt</v-icon> &nbsp;BUY
                 </v-btn>
             </div>

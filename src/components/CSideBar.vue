@@ -88,7 +88,8 @@
                         'Authorization': 'Bearer ' + this.user.api_token,
                     },
                 }
-                this.axios.post('/logout', {}, config)
+                this.axios
+                .post('/logout', {}, config)
                 .then(() => {
                     this.setAuth({})
                     this.setAlert({
@@ -99,12 +100,23 @@
                     this.setSideBar(false)
                 })
                 .catch((error)=> {
-                    let responses = error.response
-                    this.setAlert({
-                        status: true,
-                        text : responses.data.message,
-                        type : 'error',
-                    })
+                let response = {};                       
+                    if (error.response) {
+                        response = error.response;
+                        this.setAlert({
+                            status: true,
+                            text: response.data.data.message,
+                            type: 'error',
+                        });
+                    }
+                     else {
+                        response = error;
+                        this.setAlert({
+                            status: true,
+                            text: response,
+                            type: 'error',
+                        }); 
+                    }
                 })
             },
             register(){

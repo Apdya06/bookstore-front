@@ -31,7 +31,9 @@
     import SearchList from './views/SearchList.vue'
     import LoginPage from './views/LoginPage.vue'
     import RegisterPage from './views/RegisterPage.vue'
-
+    import CartView from './views/CartView.vue'
+    import CheckoutPage from './views/CheckoutPage.vue'
+    
     export default {
         name: 'App',
         components: {
@@ -42,6 +44,8 @@
             SearchList,
             LoginPage,
             RegisterPage,
+            CartView,
+            CheckoutPage,
         },
         methods: {
             ...mapActions({

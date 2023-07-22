@@ -47,12 +47,7 @@
             }
         },
         methods: {
-            ...mapActions({
-                setAlert: 'alert/set',
-                setStatusDialog: 'dialog/setStatus',
-                setAuth: 'auth/set',
-            }),
-            close() {
+             close() {
                 this.setStatusDialog(false);
             },
             submit() {
@@ -62,7 +57,8 @@
                         password: this.password, 
 
                     };
-                    this.axios.post('/login', formData)
+                    this.axios
+                    .post('/login', formData)
                     .then((response) => {
                         let data_user = response.data.data;
                         this.setAuth(data_user);
@@ -71,15 +67,13 @@
                                 text: response.data.message,
                                 type: response.data.status,
                             })
-                        if (this.user.id > 0) {
-                            this.close()
-                        } 
+                        if(this.prevUrl.length>0) this.$router.push(this.prevUrl)
+                            this.close()                    
                     })
                     .catch((error) => {
                         let response = {};                       
                         if (error.response) {
                             response = error.response;
-                            console.log('res1', response);
                             this.setAlert({
                                 status: true,
                                 text: response.data.data.message,
@@ -88,7 +82,6 @@
                         }
                          else {
                             response = error;
-                            console.log('res2', response);
                             this.setAlert({
                                 status: true,
                                 text: response,
@@ -98,10 +91,16 @@
                     });
                 }
             },
+            ...mapActions({
+                setAlert: 'alert/set',
+                setStatusDialog: 'dialog/setStatus',
+                setAuth: 'auth/set',
+            }),
         },
         computed: {
             ...mapGetters({
                 user: 'auth/user',
+                prevUrl: 'prevUrl'
             }),
         },
     };

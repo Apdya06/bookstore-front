@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store/index'
 
 Vue.use(VueRouter)
 
@@ -40,12 +41,35 @@ const routes = [
         name: 'book',
         component: () => import('../views/BookView.vue')
     },
-]
-
+    {
+        path: '/checkout',
+        name: 'checkout',
+        component: () => import('../views/CheckoutPage.vue'),
+        meta: { auth: true }
+    },
+]    
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.auth)) {
+        if(store.getters['auth/guest']) {
+            store.dispatch('alert/set', {
+                status: true,
+                text: 'Login First',
+                type: 'error',
+            })
+            store.dispatch('setPrevUrl', to.path)
+            store.dispatch('dialog/setComponent', 'login-page')
+        } else {
+            next()
+        }
+    } else {
+        next()
+    }
 })
 
 export default router
