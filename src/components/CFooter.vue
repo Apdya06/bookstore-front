@@ -3,9 +3,11 @@
         <v-flex xs12>
             <v-card text tile class="white--text text-xs-center" color="primary">
                 <v-card-text>
-                    <v-btn v-for="icon in icons" :key="icon" class="mx-3 white--text" icon>
-                        <v-icon size="24px">{{ icon }}</v-icon>
-                    </v-btn>
+                    <v-layout justify-center row wrap>
+                        <v-btn v-for="icon in icons" :key="icon" class="mx-3 white--text" icon>
+                            <v-icon size="24px">{{ icon }}</v-icon>
+                        </v-btn>
+                    </v-layout>
                 </v-card-text>
                 <v-layout justify-center row wrap>
                     <v-btn v-for="link in links" :key="link" color="white" text rounded>

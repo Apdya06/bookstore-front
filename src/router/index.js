@@ -47,6 +47,24 @@ const routes = [
         component: () => import('../views/CheckoutPage.vue'),
         meta: { auth: true }
     },
+    {
+        path: '/payment',
+        name: 'payment',
+        component: () => import('../views/PaymentPage.vue'),
+        meta: { auth: true }
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('../views/ProfilePage.vue'),
+        meta: { auth: true }
+    },
+    {
+        path: '/my-order',
+        name: 'my-order',
+        component: () => import('../views/MyOrderPage.vue'),
+        meta: { auth: true }
+    },
 ]    
 const router = new VueRouter({
     mode: 'history',

@@ -2,11 +2,11 @@
     <div>
         <v-container grid-list-md>
             <v-subheader> {{ category.name }}</v-subheader>
-            <v-img v-if="category.image" :src="getImage(category.image)" height="150px"></v-img>
+            <v-img v-if="category.image" :src="getImage(category.image)" height="150px" class="book-card"></v-img>
             <v-subheader>Books by "{{ category.name }}" category </v-subheader>
             <v-layout row wrap>
                 <v-flex v-for="book in books" xs6 :key="book.id">
-                    <v-card :to="'/book/' + book.slug">
+                    <v-card :to="'/book/' + book.slug" class="book-card">
                         <v-img v-if="book.cover" :src="getImage(book.cover)" height="150px">
                             <v-container fill-height fluid pa-2>
                                 <v-layout fill-height>
@@ -16,6 +16,16 @@
                                 </v-layout>
                             </v-container>
                         </v-img>
+                        <v-card-text class="book-info">
+                            <div class="author-publisher">
+                                <span class="author">{{ book.author }}</span>
+                                <span class="publisher">{{ book.publisher }}</span>
+                            </div>
+                            <div class="price-stock">
+                                <span class="price">Price: ${{ book.price.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}</span>
+                                <span class="stock">Stock: {{ book.stock }}</span>
+                            </div>
+                            </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn icon>
@@ -41,16 +51,53 @@
 </template>
 
 <style>
-    .text-block {
-        position:absolute;
-        bottom: 5px;
-        left: 5px;
-        background-color: black;
-        padding-left: 5px;
-        padding-right: 5px;
-        opacity: 0.7;
-        width: 100%;
-    }
+.text-block {
+    position:absolute;
+    bottom: 5px;
+    left: 5px;
+    background-color: black;
+    padding-left: 5px;
+    padding-right: 5px;
+    opacity: 0.7;
+    width: 100%;
+}
+.book-card {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+ }
+  
+.book-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2) !important;
+}
+  
+.book-info {
+    margin-top: 10px !important;
+}
+.author-publisher {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+  
+.author, .publisher {
+    font-size: 12px;
+    color: gray;
+  }
+  
+.price-stock {
+    font-size: 14px;
+}
+  
+.price {
+    font-weight: bold;
+}
+  
+.stock {
+    margin-left: 5px;
+}
 </style>
 
 <script>

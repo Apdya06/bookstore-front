@@ -22,7 +22,7 @@
                 set(value) {
                     this.setAlert({
                         status: value,
-                        text: 'test',
+                        text: '',
                         type : 'error',
                     })
                 }

@@ -22,8 +22,8 @@
                         <v-list-item-content>
                             <v-list-item-title v-html="item.title"></v-list-item-title>
                             <v-list-item-subtitle>
-                                Rp. {{ item.price.toLocaleString('id-ID') }}
-                                ({{ item.weight }} kg)
+                                {{ item.price.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}
+                                ({{ formattedWeight(item.weight) }})
                                 <span style="float:right">
                                     <v-btn icon small rounded depressed @click.stop="removeCart(item)">
                                         <v-icon dark color="error">mdi-minus-circle</v-icon>
@@ -42,8 +42,8 @@
                 <v-card-text>
                     <v-layout wrap>
                         <v-flex pa-1 xs6>
-                            Total Price ({{ totalQuantity }} items)<br>
-                            <span class="title">Rp. {{ totalPrice.toLocaleString('id-ID') }}</span>
+                            Total Price ({{ totalQuantity }} items)<br>({{ formattedWeight(totalWeight) }})<br>
+                            <span class="title">{{ totalPrice.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}</span>
                         </v-flex>
                         <v-flex pa-1 xs6 text-right>
                             <v-btn color="primary" @click="checkout" :disabled="totalQuantity==0">
@@ -72,6 +72,7 @@
             checkout(){
                 this.$emit('closed', false)
                 this.$router.push({path: "/checkout"})
+                this.setStatusDialog(false)
             },
             close(){
                 this.setStatusDialog(false)
@@ -91,6 +92,12 @@
                     });
                 }
                 this.$store.dispatch('cart/add', item)
+            },
+            formattedWeight(weight) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'unit',
+                    unit: 'kilogram'
+                }).format(weight);
             },
         },
         computed: {

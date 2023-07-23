@@ -33,9 +33,9 @@
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title v-html="item.title"></v-list-item-title>
-                                Rp. {{ item.price.toLocaleString('id-ID') }} ({{ item.weight }} kg)
+                                {{ item.price.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }} ({{ formattedWeight(item.weight) }})
                                 <span style="float:right">
-                                    {{ item.quantity }}
+                                    {{ item.quantity }} Pcs
                                 </span>
                             </v-list-item-content>
                         </v-list-item>
@@ -45,7 +45,7 @@
                     <v-card-actions>
                         Subtotal
                             <v-spacer />
-                        Rp. {{ totalPrice.toLocaleString('id-ID') }}
+                        {{ totalPrice.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}
                     </v-card-actions>
                 </v-container>
             </v-card>
@@ -62,27 +62,42 @@
                     <v-card-actions>
                         Subtotal
                         <v-spacer />
-                        Rp. {{ shippingCost.toLocaleString('id-ID') }}
+                        {{ shippingCost.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}
                     </v-card-actions>
                 </v-container>
             </v-card>
         </div>
         <v-subheader>Total</v-subheader>
-        <v-card>
-            <v-container>
+        <v-card flat>
+            <v-container class="mb-10"> 
                 <v-layout row wrap>
                     <v-flex xs6 text-center>
-                        Total Bill ({{ totalQuantity }} items)
-                        <div class="title">{{ totalBill.toLocaleString('id-ID') }}</div>
+                        Total Bill ({{ totalQuantity }} items)<br>({{ formattedWeight(totalWeight) }})
+                        <div class="title">{{ totalBill.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}</div>
                     </v-flex>
                     <v-flex xs6 text-center>
-                        <v-btn color="orange">
+                        <v-btn color="orange" @click="dialogConfirm=true" :disabled="totalBill == 0">
                             <v-icon light>attach_money</v-icon> &nbsp; Pay
                         </v-btn>
                     </v-flex>
                 </v-layout>
             </v-container>
         </v-card>
+        <template>
+            <v-layout row justify-center>
+                <v-dialog v-model="dialogConfirm" persistent max-width="290px">
+                    <v-card>
+                        <v-card-title class="headline">Confirmation!</v-card-title>
+                        <v-card-text>If You Press Continue, Transaction Will Be Processed</v-card-text>
+                        <v-card-actions>
+                            <v-btn color="warning" @click="cancel">Cancel</v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn color="success" @click="pay">Continue</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
+        </template>
     </div>
  </template>
     
@@ -190,12 +205,67 @@
                 this.shippingCost = selectedService.cost;
                 this.totalBill = parseInt(this.totalPrice) + parseInt(this.shippingCost);
             },
+            pay() {
+                this.dialogConfirm = false
+                let courier = this.courier
+                let service = this.service
+                let safeCart = JSON.stringify(this.carts)
+                let formData = new FormData()
+                formData.set('courier', courier)
+                formData.set('service', service)
+                formData.set('carts', safeCart)
+                let config = {
+                    headers: {'Authorization': 'Bearer ' + this.user.api_token}
+                }
+                this.axios.post(`/payment`, formData, config)
+                .then((response) => {
+                    let { data } = response
+                    if (data && data.status == 'success') {
+                        this.setPayment(data.data)
+                        this.$router.push({ path: "/payment" })
+                        this.setCart([])
+                    }
+                    this.setAlert({
+                        status: true,
+                        text: data.message,
+                        type: data.status,
+                    })
+                })
+                .catch((error) => {
+                    let response = {};                       
+                    if (error.response) {
+                        response = error.response;
+                        this.setAlert({
+                            status: true,
+                            text: response.data.data.message,
+                            type: 'error',
+                        });
+                    }else {
+                        response = error;
+                        this.setAlert({
+                            status: true,
+                            text: response,
+                            type: 'error',
+                        }); 
+                    }
+                })
+            },
+            cancel() {
+                this.dialogConfirm = false
+            },
+            formattedWeight(weight) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'unit',
+                    unit: 'kilogram'
+                }).format(weight);
+            },
             ...mapActions({
                 setAlert: 'alert/set',
                 setAuth: 'auth/set',
-                updateProvinces: 'region/setProvinces',
-                updateCities: 'region/setCities',
+                setProvinces: 'region/setProvinces',
+                setCities: 'region/setCities',
                 setCart: 'cart/set',
+                setPayment: 'setPayment'
             }),
         },
         computed: {
@@ -225,11 +295,11 @@
             if (this.provinces) {
                 this.axios.get(`/provinces`)
                 .then((response) => {
-                    this.updateProvinces(response.data.data)
+                    this.setProvinces(response.data.data)
                 })
                 this.axios.get(`/cities`)
                 .then((response) => {
-                    this.updateCities(response.data.data)
+                    this.setCities(response.data.data)
                 })
             }
             if (this.couriers.length == 0) {
@@ -238,7 +308,7 @@
                     this.couriers = response.data.data
                 })
             }
-        }
+        },
     }
 </script>
     

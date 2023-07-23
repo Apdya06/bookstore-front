@@ -14,6 +14,16 @@
                                 </v-layout>
                             </v-container>
                         </v-img>
+                        <v-card-text class="book-info">
+                            <div class="author-publisher">
+                                <span class="author">{{ book.author }}</span>
+                                <span class="publisher">{{ book.publisher }}</span>
+                            </div>
+                            <div class="price-stock">
+                                <span class="price">Price: {{ book.price.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}</span>
+                                <span class="stock">Stock: {{ book.stock }}</span>
+                            </div>
+                        </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn icon>
@@ -46,6 +56,32 @@
     padding-right: 5px;
     opacity: 0.7;
     width: 100%;
+}
+.book-info {
+    margin-top: 10px;
+}
+  
+.author-publisher {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+  
+.author, .publisher {
+    font-size: 12px;
+    color: gray;
+  }
+  
+.price-stock {
+    font-size: 14px;
+}
+  
+.price {
+    font-weight: bold;
+}
+  
+.stock {
+    margin-left: 5px;
 }
 </style>
 

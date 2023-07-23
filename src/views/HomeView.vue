@@ -8,7 +8,7 @@
             </v-subheader>
             <v-layout row wrap>
                 <v-flex v-for="category in categories" xs6 :key="category.id"> 
-                    <v-card :to="'/category/'+ category.slug">
+                    <v-card :to="'/category/'+ category.slug" class="category-card">
                         <v-img :src="getImage(category.image)" height="150px">
                             <v-container fill-height fluid pa-2>
                                 <v-layout fill-height>
@@ -18,18 +18,10 @@
                                 </v-layout>
                             </v-container>
                         </v-img>
-                        <v-card-actions> 
-                            <v-spacer></v-spacer>
-                            <v-btn icon>
-                                <v-icon>favorite</v-icon>
-                            </v-btn>
-                            <v-btn icon>
-                                <v-icon>bookmark</v-icon>
-                            </V-btn>
-                            <v-btn icon>
-                                <v-icon>share</v-icon>
-                            </v-btn>
-                        </v-card-actions>
+                        <v-card-text class="category-status">
+                            <v-icon>{{ getCategoryIcon(category.status) }}</v-icon>
+                            <span class="status">{{ category.status }}</span>
+                        </v-card-text>
                     </v-card>
                 </v-flex>
             </v-layout>
@@ -42,7 +34,7 @@
             </v-subheader>
             <v-layout row wrap>
                 <v-flex v-for="(book, index) in books" xs6 :key="index">
-                    <v-card :to="'/book/'+ book.slug"> 
+                    <v-card :to="'/book/'+ book.slug" class="book-card"> 
                         <v-img height="150px" :src="getImage(book.cover)">
                             <v-container fill-height fluid pa-2> 
                                 <v-layout fill-height>
@@ -52,6 +44,16 @@
                                 </v-layout>
                             </v-container>
                         </v-img>
+                        <v-card-text class="book-info">
+                            <div class="author-publisher">
+                                <span class="author">{{ book.author }}</span>
+                                <span class="publisher">{{ book.publisher }}</span>
+                            </div>
+                            <div class="price-stock">
+                                <span class="price">Price: {{ book.price.toLocaleString('id-ID', {style:"currency", currency:"IDR"}) }}</span>
+                                <span class="stock">Stock: {{ book.stock }}</span>
+                            </div>
+                        </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn icon>
@@ -132,8 +134,7 @@
     margin-bottom: 5px;
 }
   
-  .author,
-.publisher {
+.author, .publisher {
     font-size: 12px;
     color: gray;
   }
